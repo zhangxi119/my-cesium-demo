@@ -1,0 +1,27 @@
+{
+  "name": "@ylz-material/table",
+  "version": "1.1.75",
+  "description": "基于 element-plus 的高阶组件库。",
+  "homepage": "http://fe-yun-desgin-beta-component.ops.yunlizhi.net/zh-CN/component/changelog.html",
+  "repository": {
+    "type": "git",
+    "url": "https://git.ops.yunlizhi.cn/frontend/yun-desgin/fe-yun-desgin-beta-component"
+  },
+  "materialType": "component",
+  "files": [
+    "lib"
+  ],
+  "main": "./lib/index.umd.js",
+  "module": "./lib/index.es.js",
+  "style": "./lib/style.css",
+  "peerDependencies": {
+    "vue": ">=3.0.0",
+    "@ylz-material/pagination": ">=1.0.0",
+    "yun-design": ">=1.1.6"
+  },
+  "dependencies": {
+    "vuedraggable": "4.1.0",
+    "lodash": "^4.17.21",
+    "js-md5": "^0.7.0"
+  }
+}
