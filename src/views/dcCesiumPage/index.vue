@@ -50,17 +50,20 @@ function initBaseMapLayer() {
 // 近地天空盒
 function initSkyBox() {
   const distance = 8000;
+  // 框架提供的原默认天空盒
+  const defaultSkyBoxes = viewer.skyBox;
   const skyBoxes = {
-    positiveX: 'src/assets/dc-img/sky-box/2/right.png',
-    negativeX: 'src/assets/dc-img/sky-box/2/left.png',
-    positiveY: 'src/assets/dc-img/sky-box/2/up.png',
-    negativeY: 'src/assets/dc-img/sky-box/2/down.png',
-    positiveZ: 'src/assets/dc-img/sky-box/2/back.png',
-    negativeZ: 'src/assets/dc-img/sky-box/2/front.png',
+    positiveX: 'src/assets/dc-img/sky-box/5/right.png',
+    negativeX: 'src/assets/dc-img/sky-box/5/left.png',
+    positiveY: 'src/assets/dc-img/sky-box/5/down.png',
+    negativeY: 'src/assets/dc-img/sky-box/5/up.png',
+    positiveZ: 'src/assets/dc-img/sky-box/5/back.png',
+    negativeZ: 'src/assets/dc-img/sky-box/5/front.png',
   };
   viewer.on(DC.SceneEventType.POST_RENDER, () => {
     if (viewer.cameraPosition.alt < distance) {
       viewer.setOptions({
+        showAtmosphere: false,
         skyBox: {
           sources: skyBoxes, // 六个面的贴图
           show: true, //是否显示
@@ -69,9 +72,10 @@ function initSkyBox() {
       });
     } else {
       viewer.setOptions({
+        showAtmosphere: true,
         skyBox: {
-          sources: {}, // 六个面的贴图
-          show: false, //是否显示
+          sources: defaultSkyBoxes, // 六个面的贴图
+          show: true, //是否显示
           offsetAngle: 0, //旋转角度
         },
       });
