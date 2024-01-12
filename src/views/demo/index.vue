@@ -8,13 +8,17 @@ import * as d3 from 'd3';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { CSS2DRenderer, CSS2DObject } from 'three/examples/jsm/renderers/CSS2DRenderer.js';
 import { useCureLine } from './hooks/useCureLine';
-// import { Line2 } from 'three/examples/jsm/lines/Line2.js';
-// import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial.js';
-// import { LineGeometry } from 'three/examples/jsm/lines/LineGeometry.js';
 
 const scene = new THREE.Scene();
 const offsetXY = d3.geoMercator();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+let moveSpots = [];
+const depth = 1;
+
+const particleGeometry = new THREE.BufferGeometry();
+let particlePoints = [];
+let opacitys = null;
+let pointsMesh = null;
 
 const fetchMapAreaData = () => {
   const url = 'https://geo.datav.aliyun.com/areas_v3/bound/geojson?code=510000_full';
@@ -66,7 +70,89 @@ const fetchMapAreaData = () => {
         }
       });
     });
+  createAreaLight();
 };
+
+// 创建大区域轮廓动画
+function createAreaLight() {
+  const urlProvince = 'https://geo.datav.aliyun.com/areas_v3/bound/geojson?code=510000';
+  // 获取整区域轮廓
+  fetch(urlProvince)
+    .then((resp) => {
+      if (resp.ok) return resp.json();
+    })
+    .then((res) => {
+      const { customPoints } = createLine(res.features[0].geometry.coordinates[0][0], depth + 0.1, {
+        hasPoints: true,
+      });
+      particlePoints = customPoints;
+      // 参考官网转换顶点数据
+      // const { pointsMesh } = useShaderColor(particleGeometry, particlePoints, opacitys);
+      // 控制 颜色和粒子大小
+      const params = {
+        pointSize: 5.0,
+        pointColor: '#4ec0e9',
+      };
+      // 顶点着色器
+      const vertexShader = `
+    attribute float aOpacity;
+    uniform float uSize;
+    varying float vOpacity;
+
+    void main(){
+        gl_Position = projectionMatrix*modelViewMatrix*vec4(position,1.0);
+        gl_PointSize = uSize;
+
+        vOpacity=aOpacity;
+    }
+    `;
+      // 片元着色器
+      const fragmentShader = `
+    varying float vOpacity;
+    uniform vec3 uColor;
+
+    float invert(float n){
+        return 1.-n;
+    }
+
+    void main(){
+      if(vOpacity <=0.2){
+          discard;
+      }
+      vec2 uv=vec2(gl_PointCoord.x,invert(gl_PointCoord.y));
+      vec2 cUv=2.*uv-1.;
+      vec4 color=vec4(1./length(cUv));
+      color*=vOpacity;
+      color.rgb*=uColor;
+      
+      gl_FragColor=color;
+    }
+    `;
+
+      // 参考官网转换顶点数据
+      const vertices = new Float32Array(particlePoints.flat(1));
+      particleGeometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
+      // 设置 粒子透明度为 0
+      opacitys = new Float32Array(vertices.length).map(() => 0);
+      particleGeometry.setAttribute('aOpacity', new THREE.BufferAttribute(opacitys, 1));
+
+      const material = new THREE.ShaderMaterial({
+        vertexShader: vertexShader,
+        fragmentShader: fragmentShader,
+        transparent: true, // 设置透明
+        uniforms: {
+          uSize: {
+            value: params.pointSize,
+          },
+          uColor: {
+            value: new THREE.Color(params.pointColor),
+          },
+        },
+      });
+      pointsMesh = new THREE.Points(particleGeometry, material);
+      scene.add(pointsMesh);
+    });
+}
 
 // 创建各区域mesh
 function createMesh(data, color, depth) {
@@ -103,16 +189,20 @@ function createMesh(data, color, depth) {
 }
 
 // 创建区域轮廓描边线
-function createLine(data, depth) {
+function createLine(data, depth, options = {}) {
+  const { color = '0x0000ff', hasPoints = false } = options;
   const points = [];
+  const customPoints = [];
   // data为所有二维数组的经纬度坐标点
   data.forEach((item) => {
     const [x, y] = offsetXY(item);
     // 连线--将y坐标倒过来，不然成图看起像是镜像
     points.push(new THREE.Vector3(x, -y, 0));
+    // 此处应该存储的是点位成为二维数组而不是存储一维数组
+    if (hasPoints) customPoints.push([x, -y, depth]);
   });
-  const materialLineUp = new THREE.LineBasicMaterial({ color: 0x0000ff });
-  const materialLineDown = new THREE.LineBasicMaterial({ color: 0x0000ff });
+  const materialLineUp = new THREE.LineBasicMaterial({ color });
+  const materialLineDown = new THREE.LineBasicMaterial({ color });
 
   const geometryLine = new THREE.BufferGeometry().setFromPoints(points);
 
@@ -120,7 +210,7 @@ function createLine(data, depth) {
   const lineDown = new THREE.Line(geometryLine, materialLineDown);
   lineUp.position.z = depth + 0.0001;
   lineDown.position.z = -0.0001;
-  return [lineUp, lineDown];
+  return { lineUp, lineDown, customPoints };
 }
 
 // 创建文字标签
@@ -155,10 +245,10 @@ function createIcon(point, depth) {
 
 function createMap(data) {
   const map = new THREE.Object3D();
+  moveSpots = [];
   // 转换中心点
   const center = data.features[0].properties.centroid;
   offsetXY.center(center).translate([0, 0]);
-  const { createFlyLine } = useCureLine();
   data.features.forEach((feature) => {
     // 单位区域变量
     const unit = new THREE.Object3D();
@@ -169,7 +259,6 @@ function createMap(data) {
       ${Math.random() * 30 + 55}%,
       ${Math.random() * 30 + 55}%)`).getHex();
     // const depth = Math.random() * 0.7 + 0.3;
-    const depth = 1;
 
     // 中心点及区划名称
     const { centroid, center, name } = feature.properties;
@@ -186,8 +275,8 @@ function createMap(data) {
 
       function fn(coordinate) {
         const mesh = createMesh(coordinate, color, depth);
-        const lineArr = createLine(coordinate, depth);
-        unit.add(mesh, ...lineArr);
+        const { lineUp, lineDown } = createLine(coordinate, depth, {});
+        unit.add(mesh, lineUp, lineDown);
       }
     });
     // 飞线
@@ -196,8 +285,14 @@ function createMap(data) {
       const [cx, cy] = offsetXY([104.065735, 30.659462]);
       // 其它市作为结束点
       const [ex, ey] = offsetXY(centerPoint);
-      const featLine = createFlyLine(new THREE.Vector3(cx, -cy, depth), new THREE.Vector3(ex, -ey, depth));
-      map.add(featLine);
+      // 创建三次贝塞尔曲线-飞线
+      const { createCureLine } = useCureLine();
+      const { featLineMesh, moveMesh } = createCureLine(
+        new THREE.Vector3(cx, -cy, depth),
+        new THREE.Vector3(ex, -ey, depth),
+      );
+      moveSpots.push(moveMesh);
+      map.add(featLineMesh, moveMesh);
     }
     map.add(unit, label, icon);
   });
@@ -244,13 +339,35 @@ const initMap = () => {
   const controls = new OrbitControls(camera, renderer.domElement);
   controls.update();
 
+  let currentPos = 0;
+  let pointSpeed = 5; // 速度
   const animate = () => {
     renderer.render(scene, camera);
     labelRenderer.render(scene, camera);
+    // 飞线上的球体运动
+    moveSpots.forEach((mesh) => {
+      mesh._s += 0.006;
+      let tankPosition = new THREE.Vector3();
+      tankPosition = mesh.curve.getPointAt(mesh._s % 1);
+      mesh.position.set(tankPosition.x, tankPosition.y, tankPosition.z);
+    });
+    // 环线动效
+    if (pointsMesh && particleGeometry.attributes.position) {
+      currentPos += pointSpeed;
+      // 将当前点位之前的点位隐藏
+      for (let i = 0; i < currentPos; i++) {
+        opacitys[(currentPos - i) % particlePoints.length] = 0;
+      }
+
+      // 设置显示的点位、控制高亮点位的长度、渐变
+      for (let i = 0; i < 200; i++) {
+        opacitys[(currentPos + i) % particlePoints.length] = i / 50 > 2 ? 2 : i / 50;
+      }
+      particleGeometry.attributes.aOpacity.needsUpdate = true;
+    }
     requestAnimationFrame(animate);
   };
   animate();
-
   window.addEventListener('resize', () => {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
@@ -272,5 +389,7 @@ onMounted(() => {
   width: 100%;
   height: 100%;
   background-color: #d4e7fd;
+  overflow: hidden;
+  position: relative;
 }
 </style>

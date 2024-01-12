@@ -6,8 +6,11 @@
 // import * as DC from '@dvgis/dc-sdk';
 
 import { onMounted } from 'vue';
+import { cloneDeep } from 'lodash';
 
 let viewer = undefined;
+
+let defaultSkyBoxes = undefined;
 
 // 加载瓦片建筑数据
 function initTileBuild() {
@@ -49,9 +52,7 @@ function initBaseMapLayer() {
 
 // 近地天空盒
 function initSkyBox() {
-  const distance = 8000;
-  // 框架提供的原默认天空盒
-  const defaultSkyBoxes = viewer.skyBox;
+  const distance = 5000;
   const skyBoxes = {
     positiveX: 'src/assets/dc-img/sky-box/5/right.png',
     negativeX: 'src/assets/dc-img/sky-box/5/left.png',
@@ -63,7 +64,7 @@ function initSkyBox() {
   viewer.on(DC.SceneEventType.POST_RENDER, () => {
     if (viewer.cameraPosition.alt < distance) {
       viewer.setOptions({
-        showAtmosphere: false,
+        showAtmosphere: true,
         skyBox: {
           sources: skyBoxes, // 六个面的贴图
           show: true, //是否显示
@@ -73,11 +74,7 @@ function initSkyBox() {
     } else {
       viewer.setOptions({
         showAtmosphere: true,
-        skyBox: {
-          sources: defaultSkyBoxes, // 六个面的贴图
-          show: true, //是否显示
-          offsetAngle: 0, //旋转角度
-        },
+        skyBox: defaultSkyBoxes,
       });
     }
   });
@@ -128,12 +125,15 @@ function initViewer() {
   viewer.setOptions({
     shadows: true, // 是否开启阴影
     showAtmosphere: true, //是否显示大气层
+    enableFxaa: true, // 抗锯齿
     globe: {
       // baseColor: DC.Color.BLACK,
       enableLighting: false,
       preloadSiblings: true,
     },
   });
+  // 框架提供的原默认天空盒
+  defaultSkyBoxes = cloneDeep(viewer.scene.skyBox);
   // 建筑
   initTileBuild();
   // 飞线
@@ -158,7 +158,7 @@ function initViewer() {
     });
     // 相机移动
     viewer.flyToPosition(position);
-  }, 5000);
+  }, 3000);
   // 监听相机位置
   viewer.on(DC.SceneEventType.CAMERA_CHANGED, () => {});
 }

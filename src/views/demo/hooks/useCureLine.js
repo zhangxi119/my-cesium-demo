@@ -18,7 +18,7 @@ function getLenVcetor(v1, v2, len) {
 export const useCureLine = () => {
   let points = [];
 
-  function createFlyLine(v0, v3) {
+  function createCureLine(v0, v3) {
     // 夹角
     var angle = (v0.angleTo(v3) * 1.8) / Math.PI / 0.1; // 0 ~ Math.PI
     var aLen = angle * 0.4,
@@ -55,17 +55,24 @@ export const useCureLine = () => {
     geometry.setPositions(positions);
     geometry.setColors(colors);
     var matLine = new LineMaterial({
-      linewidth: 0.0008,
+      linewidth: 0.001,
       vertexColors: true,
       dashed: false,
     });
-    var lineMesh = new Line2(geometry, matLine);
+    // 线mesh
+    const featLineMesh = new Line2(geometry, matLine);
+    // 线上的移动物体
+    const aGeo = new THREE.SphereGeometry(0.1, 0.1, 0.1);
+    const aMater = new THREE.MeshPhongMaterial({ color: 0xff0000, side: THREE.DoubleSide });
+    const moveMesh = new THREE.Mesh(aGeo, aMater);
+    // 保存曲线实例
+    moveMesh.curve = curve;
+    moveMesh._s = 0;
 
-    return lineMesh;
+    return { featLineMesh, moveMesh };
   }
 
   return {
-    points,
-    createFlyLine,
+    createCureLine,
   };
 };
