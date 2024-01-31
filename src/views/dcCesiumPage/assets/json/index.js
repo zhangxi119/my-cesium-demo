@@ -6,8 +6,7 @@ const coordinate = {
 
 const importCoordinate = (code) => {
   if (coordinate[code]) return coordinate[code];
-  console.log(new Error('暂无区划地理数据!'));
-  return;
+  return () => '暂无区划地理数据！';
 };
 
 export default importCoordinate;

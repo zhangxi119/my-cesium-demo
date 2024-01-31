@@ -1,22 +1,5 @@
 <template>
   <div class="earth-content">
-    <el-form v-if="false" :model="form" inline>
-      <el-form-item label="地球球体">
-        <el-switch v-model="form.earthVisible" />
-      </el-form-item>
-      <el-form-item label="点位">
-        <el-switch v-model="form.pointVisible" />
-      </el-form-item>
-      <el-form-item label="工具栏">
-        <el-switch v-model="form.toolbar" />
-      </el-form-item>
-      <el-form-item label="区域颜色">
-        <el-color-picker v-model="form.areaColor" color-format="rgb" />
-      </el-form-item>
-      <el-form-item label="区域发光线颜色">
-        <el-color-picker v-model="form.lineColor" color-format="rgb" />
-      </el-form-item>
-    </el-form>
     <div id="dc-box-china" class="dc-box"></div>
     <div v-if="parentCodeList.length > 0" class="back-btn">
       <el-button @click="handleClickBack" size="small" type="primary">返回</el-button>
@@ -133,6 +116,7 @@ function initMap(code = 100000) {
           checkRepeat[entity.name] = levelCode === 'china';
           if (entity.polygon) {
             let positions = DC.Transform.transformCartesianArrayToWGS84Array(
+              // http://cesium.xin/cesium/cn/Documentation1.62/Property.html
               entity.polygon.hierarchy.getValue(now).positions,
             );
             positions.map((item) => {
@@ -323,14 +307,12 @@ watch(
     height: 100%;
   }
   .back-btn {
-    display: none;
     position: absolute;
     top: 56px;
     right: 32px;
     font-size: 14px;
   }
   .logo {
-    display: none;
     width: 129px;
     height: 30px;
     position: absolute;
