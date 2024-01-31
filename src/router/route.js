@@ -12,11 +12,11 @@ export const routes = [
         name: '欢迎页',
         component: () => import(/* webpackChunkName: "welcome" */ '@/views/threePage/index.vue'),
       },
-      {
-        path: '/tableDemo',
-        name: 'table表',
-        component: () => import(/* webpackChunkName: "tableDemo" */ '@/views/tablePage/index.vue'),
-      },
+      // {
+      //   path: '/tableDemo',
+      //   name: 'table表',
+      //   component: () => import(/* webpackChunkName: "tableDemo" */ '@/views/tablePage/index.vue'),
+      // },
       {
         path: '/threeMap',
         name: '3D地图1',
@@ -35,7 +35,7 @@ export const routes = [
       {
         path: '/dcCesium',
         name: 'dcCesium地图',
-        component: () => import(/* webpackChunkName: "dcCesium" */ '@/views/dcCesiumPage/index.vue'),
+        component: () => import(/* webpackChunkName: "dcCesium" */ '@/views/dcCesiumPage/china.vue'),
       },
     ],
   },

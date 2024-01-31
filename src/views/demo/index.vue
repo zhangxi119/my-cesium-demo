@@ -8,6 +8,8 @@ import * as d3 from 'd3';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { CSS2DRenderer, CSS2DObject } from 'three/examples/jsm/renderers/CSS2DRenderer.js';
 import { useCureLine } from './hooks/useCureLine';
+import FlyLine from './fly/FlyLine.ts';
+import FlyImageLine from './fly/FlyImageLine.ts';
 
 const scene = new THREE.Scene();
 const offsetXY = d3.geoMercator();
@@ -299,9 +301,19 @@ function createMap(data) {
   return map;
 }
 
+// 新飞线
+function createFlyLine() {
+  const pathPosition = [{ begin: [0, 0], end: [5, 5], height: 5 }];
+  const pathPosition2 = [{ begin: [0, 0], end: [-5, -5], height: 5 }];
+  // 物体飞线
+  new FlyLine(scene, pathPosition);
+  new FlyImageLine(scene, pathPosition2);
+}
+
 const initMap = () => {
   // const scene = new THREE.Scene();
   scene.background = new THREE.Color(0xd4e7fd);
+  createFlyLine();
 
   const axesHelper = new THREE.AxesHelper(5);
   scene.add(axesHelper);

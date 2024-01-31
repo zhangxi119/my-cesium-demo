@@ -38,16 +38,30 @@ function initTileBuild() {
 // 加载底图
 function initBaseMapLayer() {
   // 图片底图-0
-  let blueBaseLayer = DC.ImageryLayerFactory.createImageryLayer(DC.ImageryType.SINGLE_TILE, {
-    url: 'src/assets/dc-img//world_b.jpg',
-  });
-  viewer.addBaseLayer(blueBaseLayer);
-  // 基础底图-1
-  // let baseLayer = DC.ImageryLayerFactory.createAmapImageryLayer({
-  //   style: 'img',
-  //   crs: 'WGS84',
+  // let blueBaseLayer = DC.ImageryLayerFactory.createImageryLayer(DC.ImageryType.SINGLE_TILE, {
+  //   url: 'src/assets/dc-img//world_b.jpg',
   // });
-  // viewer.addBaseLayer(baseLayer);
+  // viewer.addBaseLayer(blueBaseLayer);
+  // 基础底图-1
+  let baseLayer = DC.ImageryLayerFactory.createAmapImageryLayer({
+    style: 'img',
+    crs: 'WGS84',
+  });
+  viewer.addBaseLayer(baseLayer);
+  let layer = new DC.VectorLayer('layer');
+  viewer.addLayer(layer);
+
+  let polyline = new DC.Polyline('-75, 35; -125, 35');
+  polyline.setStyle({
+    width: 20,
+    material: new DC.PolylineLightingTrailMaterialProperty({
+      color: DC.Color.YELLOW,
+      speed: 5.0,
+    }),
+    clampToGround: true,
+  });
+  layer.addOverlay(polyline);
+  viewer.flyTo(layer);
 }
 
 // 近地天空盒
@@ -157,7 +171,7 @@ function initViewer() {
       roll: 0.0011166128298720265,
     });
     // 相机移动
-    viewer.flyToPosition(position);
+    // viewer.flyToPosition(position);
   }, 3000);
   // 监听相机位置
   viewer.on(DC.SceneEventType.CAMERA_CHANGED, () => {});

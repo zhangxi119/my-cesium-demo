@@ -27,6 +27,6 @@ export default defineConfig({
       packages: resolve(__dirname, './src/packages'),
     },
     // 省略文件后缀
-    extensions: ['', '.js', '.json', '.vue', '.scss', '.css'],
+    extensions: ['', '.js', '.json', '.vue', '.scss', '.css', '.ts'],
   },
 });

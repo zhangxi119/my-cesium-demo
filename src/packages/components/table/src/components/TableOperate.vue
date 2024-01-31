@@ -458,7 +458,7 @@ const handleClose = (done) => {
 }
 .active:after {
   content: '';
-  background: url(@/assets/icons/yun-table/check.png) center center no-repeat;
+  // background: url(@/assets/icons/yun-table/check.png) center center no-repeat;
   background-size: 100% 100%;
   width: 12px;
   height: 12px;
