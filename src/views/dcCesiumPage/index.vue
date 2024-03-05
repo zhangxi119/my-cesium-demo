@@ -3,8 +3,6 @@
 </template>
 
 <script setup>
-// import * as DC from '@dvgis/dc-sdk';
-
 import { onMounted } from 'vue';
 import { cloneDeep } from 'lodash';
 

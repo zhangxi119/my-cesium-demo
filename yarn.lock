@@ -317,23 +317,23 @@
   resolved "https://npm.ops.yunlizhi.cn/@ctrl%2ftinycolor/-/tinycolor-3.6.1.tgz#b6c75a56a1947cc916ea058772d666a2c8932f31"
   integrity sha512-SITSV6aIXsuVNV3f3O0f2n/cgyEDWoSqtZMYiAmcsYHydcKrOz3gUxB/iXd/Qf08+IZX4KpgNbvUdMBmWz+kcA==
 
-"@dvgis/dc-sdk@^3.2.0":
-  version "3.2.0"
-  resolved "https://npm.ops.yunlizhi.cn/@dvgis%2fdc-sdk/-/dc-sdk-3.2.0.tgz#1c65164bed7d46d57044cd95aeca44d311c31352"
-  integrity sha512-0yj5Q6xVNV6Ph+tvcX4IkGd0Kvq0i6lmxsXf8yy41DP0W81vvfTW/VE1b3LpmKYj6j4vLeSXfQMy/L5LaPNO9Q==
-
 "@dvgis/types@^1.2.0":
   version "1.2.0"
   resolved "https://npm.ops.yunlizhi.cn/@dvgis%2ftypes/-/types-1.2.0.tgz#f619841fade52c0875443031c98c930ff8736bcf"
   integrity sha512-3fUcCof28fWd6jZkD9XGxgqEFAAJVAF9e1KNV5B5K+1Mi+btaUQu2nYGZEcXK19//wf6dsdk8B+CN55GoaGfZA==
 
-"@dvgis/vite-plugin-dc@^2.1.2":
-  version "2.1.2"
-  resolved "https://npm.ops.yunlizhi.cn/@dvgis%2fvite-plugin-dc/-/vite-plugin-dc-2.1.2.tgz#aaa9482df3ba61f6b00ac2fec6c0be91d378f57a"
-  integrity sha512-GTE5Rp4FT1cbyUw8sHbai6BxKvij9sEeSr+eBIGPXkr91oMf1R+3AluAuNymSIYDJJED//oH/09lE4F/qG8NAg==
+"@dvgis/vite-plugin-yun-dc@^1.0.2":
+  version "1.0.2"
+  resolved "https://npm.ops.yunlizhi.cn/@dvgis%2fvite-plugin-yun-dc/-/vite-plugin-yun-dc-1.0.2.tgz#7cee551550aa9ba024372e19346d0a32131803cf"
+  integrity sha512-TaZd2nDfUFudIX1BZD/qUj3dIOL/MBsBQjaUxz52UWXHRw1+buVFd5cc3UWRDsHoEqnMRzhCHH2GijgRo/7zBQ==
   dependencies:
     fs-extra "^9.1.0"
     serve-static "^1.14.1"
+
+"@dvgis/yun-dc-sdk@^1.0.1":
+  version "1.0.1"
+  resolved "https://npm.ops.yunlizhi.cn/@dvgis%2fyun-dc-sdk/-/yun-dc-sdk-1.0.1.tgz#1ab142e557c0c202668b5fb8e38bb6d4779c1681"
+  integrity sha512-AcB7NDXtrOf5u3cyqjdi/lNBVmJA9N5tuJRC2zmDpyrn57LnThN5hFKGEl7B1+U8IogdaPT8UbDQ4vwgrMSKQw==
 
 "@element-plus/icons-vue@^2.0.6":
   version "2.1.0"

@@ -33,8 +33,8 @@
 <script setup>
 import { onMounted, ref, reactive, watch } from 'vue';
 import { ElMessage } from 'element-plus';
-import importCoordinate from './assets/json';
-import '@dvgis/dc-sdk/dist/dc.min.css';
+// import importCoordinate from './assets/json';
+import '@dvgis/yun-dc-sdk/dist/dc.min.css';
 // import '@dvgis/dc-sdk/dist/dc.min.js';
 // import * as DC from '@dvgis/dc-sdk'
 
@@ -102,7 +102,12 @@ function initMap(code = 100000) {
 
   // let chainData = new DC.GeoJsonLayer('china', `https://geo.datav.aliyun.com/areas_v3/bound/${code}_full.json`);
   // const chainDataPromise =  Cesium.GeoJsonDataSource.load(`/zh-CN/examples/components/earth-3d/assets/json/${code}_full.json`,{});
-  const chainDataPromise = Cesium.GeoJsonDataSource.load(importCoordinate(code)(), {});
+  // const chainDataPromise = Cesium.GeoJsonDataSource.load(importCoordinate(code)(), {});
+  // https://oss-public.yunlizhi.cn/frontend/yun-design/geojson/china/110000_full.json
+  const chainDataPromise = Cesium.GeoJsonDataSource.load(
+    `https://oss-public.yunlizhi.cn/frontend/yun-design/geojson/china/${code}_full.json`,
+    {},
+  );
 
   let now = DC.JulianDate.now();
   const checkRepeat = {};

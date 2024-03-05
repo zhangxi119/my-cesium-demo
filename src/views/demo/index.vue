@@ -10,6 +10,7 @@ import { CSS2DRenderer, CSS2DObject } from 'three/examples/jsm/renderers/CSS2DRe
 import { useCureLine } from './hooks/useCureLine';
 import FlyLine from './fly/FlyLine.ts';
 import FlyImageLine from './fly/FlyImageLine.ts';
+import FlyShaderLine from './fly/FlyShaderLine';
 
 const scene = new THREE.Scene();
 const offsetXY = d3.geoMercator();
@@ -305,9 +306,11 @@ function createMap(data) {
 function createFlyLine() {
   const pathPosition = [{ begin: [0, 0], end: [5, 5], height: 5 }];
   const pathPosition2 = [{ begin: [0, 0], end: [-5, -5], height: 5 }];
+  const pathPosition3 = [{ begin: [0, 0], end: [5, -5], height: 5 }];
   // 物体飞线
   new FlyLine(scene, pathPosition);
   new FlyImageLine(scene, pathPosition2);
+  new FlyShaderLine(scene, pathPosition3);
 }
 
 const initMap = () => {
