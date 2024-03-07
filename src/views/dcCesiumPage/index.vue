@@ -160,14 +160,14 @@ function initViewer() {
   setTimeout(() => {
     // 切换底图
     // viewer.changeBaseLayer(1);
-    const position = DC.Position.fromObject({
-      lng: 121.54062794498553,
-      lat: 31.259803922429953,
-      alt: 716.4907622923589,
-      heading: 242.1585277254835,
-      pitch: -9.426917211029965,
-      roll: 0.0011166128298720265,
-    });
+    // const position = DC.Position.fromObject({
+    //   lng: 121.54062794498553,
+    //   lat: 31.259803922429953,
+    //   alt: 716.4907622923589,
+    //   heading: 242.1585277254835,
+    //   pitch: -9.426917211029965,
+    //   roll: 0.0011166128298720265,
+    // });
     // 相机移动
     // viewer.flyToPosition(position);
   }, 3000);
