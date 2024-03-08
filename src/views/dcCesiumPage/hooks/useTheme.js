@@ -1,63 +1,45 @@
-import { cloneDeep } from 'lodash';
 import worldJson from '../assets/json/world.json';
 import worldMinJson from '../assets/json/world-min.json';
 import chinaJson from '../assets/json/100000.json';
 import bgImgWorld from '@/assets/dc-img/bg-point.png';
-import bgImgMap from '@/assets/dc-img/bg-star.png';
+import bgImgMap from '@/assets/dc-img/bg2.png';
 
 export const useTheme = (DC, viewer, depth) => {
   // 获取Cesium原生库
   const { Cesium } = DC.__namespace;
 
   // 计算环绕地球的路径
-  function computeEarthPath() {
-    // 给定的起始经纬度和高度
-    var startLongitude = Cesium.Math.toRadians(-75.0); // 起始经度（弧度）
-    var startLatitude = Cesium.Math.toRadians(40.0); // 起始纬度（弧度）
-    var height = 7500000; // 高度（单位：米）
-
-    // 地球中心点的笛卡尔坐标
-    var centerCartesian = new Cesium.Cartesian3(0, 0, 0); // 地球中心点的笛卡尔坐标
+  function computeEarthPath(options = {}) {
+    const { type = 'horizontal', lng = 0, lat = 0, height = 2500000, pointsNum = 250 } = options;
+    // 设置点位数
+    var numPoints = pointsNum; // 点位数
 
     // 获取地球半径
     var ellipsoid = viewer.scene.globe.ellipsoid;
-    var radius = ellipsoid.maximumRadius;
-
-    // 将起始经纬度坐标转换为地心笛卡尔坐标
-    var startCartographic = new Cesium.Cartographic(startLongitude, startLatitude, height);
-    var startCartesian = ellipsoid.cartographicToCartesian(startCartographic);
 
     // 存储路径上的所有点
     var pathPoints = [];
 
-    // 设置点位数
-    var numPoints = 100; // 点位数
-
     // 计算路径上的每个点
     for (var i = 0; i < numPoints; i++) {
-      // 计算当前点的角度
-      var angle = Cesium.Math.TWO_PI * (i / numPoints); // 角度间隔
+      // 计算当前点的经纬度坐标
+      var longitude = type === 'horizontal' ? Cesium.Math.toRadians((i / numPoints) * 360) : lng; // 每个点在地球表面上的经度（弧度）
+      var latitude = type === 'horizontal' ? lat : Cesium.Math.toRadians((i / numPoints) * 360); // 地球表面上的纬度为 0
 
-      // 使用四元数旋转起始点
-      var quaternion = Cesium.Quaternion.fromAxisAngle(Cesium.Cartesian3.UNIT_Z, angle);
-      var rotatedCartesian = Cesium.Matrix3.multiplyByVector(
-        Cesium.Matrix3.fromQuaternion(quaternion),
-        startCartesian,
-        new Cesium.Cartesian3(),
-      );
+      // 将经纬度坐标转换为笛卡尔坐标
+      var cartesianPosition = ellipsoid.cartographicToCartesian(new Cesium.Cartographic(longitude, latitude, height));
 
-      // 将旋转后的笛卡尔坐标转换回经纬度加高度的坐标
-      var rotatedCartographic = ellipsoid.cartesianToCartographic(rotatedCartesian);
-      var latitudeDeg = Cesium.Math.toDegrees(rotatedCartographic.latitude);
-      var longitudeDeg = Cesium.Math.toDegrees(rotatedCartographic.longitude);
-      var heightMeters = rotatedCartographic.height;
+      // 将笛卡尔坐标转换为经纬度加高度的坐标
+      var cartographicPosition = ellipsoid.cartesianToCartographic(cartesianPosition);
+      var latitudeDeg = Cesium.Math.toDegrees(cartographicPosition.latitude);
+      var longitudeDeg = Cesium.Math.toDegrees(cartographicPosition.longitude);
+      var heightMeters = cartographicPosition.height;
 
       // 存储经纬度加高度的坐标
       pathPoints.push({ lat: latitudeDeg, lng: longitudeDeg, alt: heightMeters });
     }
 
     // 输出路径上的点位
-    console.log(pathPoints);
     return pathPoints;
   }
 
@@ -211,12 +193,11 @@ export const useTheme = (DC, viewer, depth) => {
     });
     let ellipsoidOut = new DC.Ellipsoid(position, { x: 7500000.0, y: 7500000.0, z: 7500000.0 }).setStyle({
       heightReference: 0,
-      material: DC.Color.fromCssColorString('rgba(255, 255, 255, 0)'),
-      // material: new DC.ImageMaterialProperty({
-      //   image: bgImgMap,
-      //   repeat: { x: 2, y: 2 },
-      //   transparent: true,
-      // }),
+      material: new DC.ImageMaterialProperty({
+        image: bgImgMap,
+        repeat: { x: 8, y: 1 },
+        transparent: true,
+      }),
       outline: false,
       outlineColor: DC.Color.fromCssColorString('rgba(255, 255, 255, 0.1)'),
       stackPartitions: 32,
@@ -243,25 +224,28 @@ export const useTheme = (DC, viewer, depth) => {
   }
 
   function initFlyLine() {
-    // 获取地球球心坐标
-    // const ellipsoidCenter = viewer.scene.globe.ellipsoid.cartographicToCartesian(new Cesium.Cartographic());
-    // const { x } = ellipsoidCenter;
-    // let position = new DC.Position(0, 0, x);
-    // const positions = computeEarthPath();
-    // const positionsStr = positions.map((e) => `${e.lat},${e.lng},${e.height}`).join(';');
     let polyline = new DC.Polyline(computeEarthPath());
     polyline.setStyle({
-      width: 20,
+      width: 8,
       material: new DC.PolylineLightingTrailMaterialProperty({
         color: DC.Color.YELLOW,
-        speed: 5.0,
+        speed: 8.0,
+      }),
+      clampToGround: false,
+    });
+    let polylineTwo = new DC.Polyline(computeEarthPath({ type: 'vertical' }));
+    polylineTwo.setStyle({
+      width: 8,
+      material: new DC.PolylineLightingTrailMaterialProperty({
+        color: DC.Color.GREEN,
+        speed: 6.0,
       }),
       clampToGround: false,
     });
 
     const layer_line_theme = new DC.VectorLayer('layer_line_theme');
     viewer.addLayer(layer_line_theme);
-    layer_line_theme.addOverlay(polyline);
+    layer_line_theme.addOverlays([polyline, polylineTwo]);
   }
 
   function initTheme() {
@@ -269,8 +253,8 @@ export const useTheme = (DC, viewer, depth) => {
     initWordTheme();
     initChinaTheme();
     initFlyLine();
-    computeEarthPath();
-    // initGlobeTheme();
+    // computeEarthPath();
+    initGlobeTheme();
   }
 
   return {

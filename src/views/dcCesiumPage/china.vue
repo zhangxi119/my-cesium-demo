@@ -19,7 +19,7 @@ const form = reactive({
   areaColor: 'rgba(47,50,54, 1)',
   lineColor: 'rgb(149,236,217)',
   pointVisible: true,
-  toolbar: false,
+  toolbar: true,
 });
 
 // 获取Cesium原生库
@@ -35,11 +35,13 @@ let areaCenter = []; // 点击区域的中心点
 let levelInfo = {
   china: {
     code: 100000, // 动态区划编码
-    lng: 109.39361908621126, // 动态经纬度
-    lat: 19.20712059186397, // 动态经纬度
-    alt: 7901540, // 相机高度
+    lng: 112.75462998, // 动态经纬度
+    lat: 25.84819722, // 动态经纬度
+    // alt: 7901540, // 相机高度
+    alt: 18189813.1, // 相机高度
     heading: 354.97,
-    pitch: -80.808,
+    // pitch: -80.808,
+    pitch: -89.89,
     depth: 250000, // 控制不同层级下区域块的厚度
     offsetLat: 3, // 相机纬度的偏移量
     pointWidth: 20000, // 不同层级下点位数据圆半径
@@ -208,7 +210,7 @@ function initViewer() {
   // const { initTheme } = useTheme(DC, viewer);
   // initTheme();
 
-  viewer.flyToPosition(levelInfo.china, () => {});
+  // viewer.flyToPosition(levelInfo.china, () => {});
 
   // 添加区域点击事件
   layer_china_area.on(DC.MouseEventType.CLICK, (e) => {
