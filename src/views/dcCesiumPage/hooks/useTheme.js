@@ -64,7 +64,7 @@ export const useTheme = (DC, viewer, depth) => {
             // 发光线
             let polylineLight = new DC.Polyline(positions);
             polylineLight.setStyle({
-              width: 0.5,
+              width: 1,
               material: new DC.PolylineTrailMaterialProperty({
                 speed: 1,
                 color: DC.Color.fromCssColorString('#dedcbe'),

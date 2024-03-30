@@ -175,6 +175,7 @@ function initViewer() {
     globe: {
       show: form.earthVisible,
       enableLighting: false,
+      preloadSiblings: true,
     },
     enableFxaa: true,
     showSun: true,
@@ -193,6 +194,10 @@ function initViewer() {
     // url: 'https://dc.dvgis.cn/examples/assets/tile/world_n.jpg',
     url: bgImg,
   });
+  viewer.loadingMask.enable = true;
+  setTimeout(() => {
+    viewer.loadingMask.enable = false;
+  }, 5000);
   // 工具栏
   viewer.locationBar.enable = form.toolbar;
 
@@ -211,6 +216,9 @@ function initViewer() {
   // initTheme();
 
   // viewer.flyToPosition(levelInfo.china, () => {});
+  // viewer.on(DC.SceneEventType.POST_RENDER, () => {
+  //   console.log('over....');
+  // });
 
   // 添加区域点击事件
   layer_china_area.on(DC.MouseEventType.CLICK, (e) => {
