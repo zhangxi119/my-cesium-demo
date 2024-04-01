@@ -26,6 +26,7 @@
     "moment": "^2.29.4",
     "resize-observer-polyfill": "^1.5.1",
     "three": "0.148.0",
+    "three-conic-polygon-geometry": "^1.6.3",
     "vite-plugin-cesium": "^1.2.22",
     "vue": "^3.3.4",
     "vue-router": "^4.2.5",

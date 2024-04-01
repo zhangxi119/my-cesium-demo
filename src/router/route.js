@@ -4,7 +4,7 @@ export const routes = [
   {
     path: '/',
     name: '首页',
-    redirect: '/dcCesium',
+    redirect: '/threeMap',
     component: AppLayout,
     children: [
       {
@@ -36,6 +36,11 @@ export const routes = [
         path: '/dcCesium',
         name: 'dcCesium地图',
         component: () => import(/* webpackChunkName: "dcCesium" */ '@/views/dcCesiumPage/china.vue'),
+      },
+      {
+        path: '/earth',
+        name: '3D地球THREE',
+        component: () => import('@/views/earth/index.vue'),
       },
     ],
   },
