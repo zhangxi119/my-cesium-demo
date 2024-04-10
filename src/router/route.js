@@ -4,7 +4,7 @@ export const routes = [
   {
     path: '/',
     name: '首页',
-    redirect: '/threeMap',
+    redirect: '/earth',
     component: AppLayout,
     children: [
       {

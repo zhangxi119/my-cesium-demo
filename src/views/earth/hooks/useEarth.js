@@ -1,7 +1,7 @@
 import * as THREE from 'three';
-import earthImg from '@/assets/dc-img/world_b.jpg';
+import earthImg from '@/assets/png/world.png';
 import { config } from '../config';
-import { useLine } from './useLine';
+import { useWorldArea } from './useWorldArea';
 
 export const useEarth = () => {
   const { R } = config;
@@ -19,9 +19,9 @@ export const useEarth = () => {
   }
   const earthGroup = new THREE.Group();
 
-  // const earthMesh = createEarthMesh();
+  const earthMesh = createEarthMesh();
   // earthGroup.add(earthMesh);
-  const { lineGroup, areaGroup } = useLine();
+  const { lineGroup, areaGroup } = useWorldArea();
   earthGroup.add(lineGroup, areaGroup);
   return {
     earthGroup,

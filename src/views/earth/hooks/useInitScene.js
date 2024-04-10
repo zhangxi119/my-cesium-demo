@@ -7,14 +7,21 @@ export const useInitScene = (elementId) => {
   const scene = new THREE.Scene();
   // 挂载元素
   const element = document.getElementById(elementId);
+  const { offsetWidth, offsetHeight } = element;
+  // const { offsetWidth, offsetHeight } = { offsetWidth: 1024, offsetHeight: 512 };
   // 渲染器
-  const renderer = new THREE.WebGLRenderer({ alpha: true });
+  const renderer = new THREE.WebGLRenderer({ alpha: true, preserveDrawingBuffer: true });
   renderer.setPixelRatio(window.devicePixelRatio);
-  renderer.setSize(element.offsetWidth, element.offsetHeight);
+  renderer.setSize(offsetWidth, offsetHeight);
   renderer.setClearColor(0x000000, 1);
 
-  const camera = new THREE.PerspectiveCamera(75, element.offsetWidth / element.offsetHeight, 0.1, 1000);
-  camera.position.set(200, 200, 200);
+  // 截图时使用正交相机
+  // const k = offsetWidth / offsetHeight;
+  // const s = 90;
+  // const camera = new THREE.OrthographicCamera(-s * k, s * k, s, -s, 1, 1000);
+
+  const camera = new THREE.PerspectiveCamera(75, offsetWidth / offsetHeight, 0.1, 1000);
+  camera.position.set(0, 0, 200);
   camera.lookAt(0, 0, 0);
 
   const controls = new OrbitControls(camera, renderer.domElement);
@@ -46,9 +53,19 @@ export const useInitScene = (elementId) => {
   const { earthGroup } = useEarth();
   scene.add(earthGroup);
 
+  // 保存图片
+  const handleSave = () => {
+    const link = document.createElement('a');
+    const canvas = renderer.domElement;
+    link.href = canvas.toDataURL('image/png');
+    link.download = 'threejs.png';
+    link.click();
+  };
+
   return {
     scene,
     renderer,
     animate,
+    handleSave,
   };
 };
