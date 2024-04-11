@@ -1,7 +1,8 @@
 import * as THREE from 'three';
-import earthImg from '@/assets/png/world.png';
+import earthImg from '@/assets/png/world-bg.png';
 import { config } from '../config';
 import { useWorldArea } from './useWorldArea';
+import { useSprite } from './useSprite';
 
 export const useEarth = () => {
   const { R } = config;
@@ -20,9 +21,13 @@ export const useEarth = () => {
   const earthGroup = new THREE.Group();
 
   const earthMesh = createEarthMesh();
-  // earthGroup.add(earthMesh);
+  earthGroup.add(earthMesh);
   const { lineGroup, areaGroup } = useWorldArea();
-  earthGroup.add(lineGroup, areaGroup);
+  earthGroup.add(areaGroup, lineGroup);
+
+  // 光圈
+  const { sprite } = useSprite();
+  earthGroup.add(sprite);
   return {
     earthGroup,
   };

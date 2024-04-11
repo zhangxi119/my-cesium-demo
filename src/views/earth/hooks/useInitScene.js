@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { useEarth } from './useEarth';
+// import { useChooseMesh } from './useChooseMesh';
 
 export const useInitScene = (elementId) => {
   // 场景
@@ -29,7 +30,7 @@ export const useInitScene = (elementId) => {
 
   const axesHelper = new THREE.AxesHelper(100);
   // 光源设置-环境光
-  const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+  const ambientLight = new THREE.AmbientLight(0xffffff, 1.2);
   scene.add(ambientLight);
   // 平行光1
   const directionalLight1 = new THREE.DirectionalLight(0xffffff, 0.6);
@@ -61,6 +62,9 @@ export const useInitScene = (elementId) => {
     link.download = 'threejs.png';
     link.click();
   };
+
+  // const { handleClick } = useChooseMesh(scene, camera);
+  // window.addEventListener('click', handleClick);
 
   return {
     scene,
